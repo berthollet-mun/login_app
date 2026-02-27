@@ -23,7 +23,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify that the login screen is shown (initial unauthenticated state)
-    expect(find.text('Welcome Back!'), findsOneWidget);
+    expect(find.text('Welcome back'), findsOneWidget);
     expect(find.text('Sign in to continue shopping'), findsOneWidget);
   });
 }

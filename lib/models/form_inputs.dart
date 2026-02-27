@@ -18,21 +18,16 @@ class Email extends FormzInput<String, EmailValidationError> {
   }
 }
 
-enum PasswordValidationError { empty, tooShort, weak }
+enum PasswordValidationError { empty, tooShort }
 
 class Password extends FormzInput<String, PasswordValidationError> {
   const Password.pure() : super.pure('');
   const Password.dirty([super.value = '']) : super.dirty();
 
-  static final RegExp _passwordRegExp = RegExp(
-    r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$',
-  );
-
   @override
   PasswordValidationError? validator(String value) {
     if (value.isEmpty) return PasswordValidationError.empty;
-    if (value.length < 8) return PasswordValidationError.tooShort;
-    if (!_passwordRegExp.hasMatch(value)) return PasswordValidationError.weak;
+    if (value.length < 6) return PasswordValidationError.tooShort;
     return null;
   }
 }
@@ -62,7 +57,7 @@ class ConfirmedPassword extends FormzInput<String, PasswordValidationError> {
   @override
   PasswordValidationError? validator(String value) {
     if (value.isEmpty) return PasswordValidationError.empty;
-    if (password.value != value) return PasswordValidationError.weak;
+    if (password.value != value) return PasswordValidationError.tooShort;
     return null;
   }
 }

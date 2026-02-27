@@ -11,8 +11,11 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth >= 600;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state.status == AuthStatus.authenticated) {
@@ -27,162 +30,167 @@ class RegisterScreen extends StatelessWidget {
             );
           }
         },
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
-                // Back Button
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, size: 20),
-                    onPressed: () => context.go('/login'),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                // Logo
-                Center(
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF6C63FF).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Image.asset(
-                        'assets/images/logo1.png',
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.shopping_bag_outlined,
-                            size: 40,
-                            color: const Color(0xFF6C63FF),
-                          );
-                        },
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/bg1.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: isTablet
+              ? Row(
+                  children: [
+                    // Background takes left side
+                    Expanded(flex: 1, child: SizedBox.expand()),
+                    // Form takes right side
+                    Expanded(
+                      flex: 1,
+                      child: SafeArea(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const SizedBox(height: 20),
+                              _buildFormContent(context),
+                              const SizedBox(height: 16),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Title
-                Text(
-                  'Create Account',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF1A1A1A),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Sign up to start shopping and get exclusive deals',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                // Demo hint
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.green[50],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.green[200]!),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  ],
+                )
+              : // Mobile: Form card floats on top of background
+              SafeArea(
+                  child: Column(
                     children: [
-                      Icon(
-                        Icons.info_outline,
-                        size: 16,
-                        color: Colors.green[700],
+                      // Top section with back button - sparse
+                      SizedBox(
+                        height: 60,
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_back_ios, 
+                              size: 20, 
+                              color: Colors.white,
+                            ),
+                            onPressed: () => context.go('/login'),
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Demo: Create any account with 6+ char password',
-                          style: TextStyle(
-                            color: Colors.green[800],
-                            fontSize: 12,
+                      // Spacer to push card down
+                      Expanded(child: Container()),
+                      // White card with form
+                      SingleChildScrollView(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              topRight: Radius.circular(32),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: _buildFormContent(context),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
-                // Register Form
-                const _RegisterForm(),
-                const SizedBox(height: 24),
-                // Divider
-                Row(
-                  children: [
-                    Expanded(child: Divider(color: Colors.grey[300])),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'Or continue with',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                      ),
-                    ),
-                    Expanded(child: Divider(color: Colors.grey[300])),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                // Social Login
-                const SocialLoginButtons(),
-                const SizedBox(height: 24),
-                // Login Link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Already have an account? ',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
-                    ),
-                    TextButton(
-                      onPressed: () => context.go('/login'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFF6C63FF),
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: const Text(
-                        'Sign In',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
         ),
       ),
     );
   }
-}
 
-class _RegisterForm extends StatelessWidget {
-  const _RegisterForm();
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildFormContent(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Logo
+            Center(
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF6C63FF).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
+                  child: Image.asset(
+                    'assets/images/logo1.png',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        Icons.shopping_bag_outlined,
+                        size: 40,
+                        color: const Color(0xFF6C63FF),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Title
+            Text(
+              'Create Account',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF1A1A1A),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Sign up to start shopping and get exclusive deals',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[600],
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            // Demo hint
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.green[50],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.green[200]!),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 16,
+                    color: Colors.green[700],
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Demo: Create any account with 6+ char password',
+                      style: TextStyle(
+                        color: Colors.green[800],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Register Form
             CustomTextField(
               label: 'Full Name',
               hint: 'Enter your full name',
@@ -190,9 +198,10 @@ class _RegisterForm extends StatelessWidget {
               onChanged: (value) {
                 context.read<AuthBloc>().add(AuthNameChanged(value));
               },
-              errorText: state.name.displayError != null
-                  ? 'Please enter a valid name'
-                  : null,
+              errorText:
+                  state.name.displayError != null
+                      ? 'Please enter a valid name'
+                      : null,
             ),
             const SizedBox(height: 16),
             CustomTextField(
@@ -203,9 +212,10 @@ class _RegisterForm extends StatelessWidget {
               onChanged: (value) {
                 context.read<AuthBloc>().add(AuthEmailChanged(value));
               },
-              errorText: state.email.displayError != null
-                  ? 'Please enter a valid email'
-                  : null,
+              errorText:
+                  state.email.displayError != null
+                      ? 'Please enter a valid email'
+                      : null,
             ),
             const SizedBox(height: 16),
             CustomTextField(
@@ -230,9 +240,10 @@ class _RegisterForm extends StatelessWidget {
               onChanged: (value) {
                 context.read<AuthBloc>().add(AuthPasswordChanged(value));
               },
-              errorText: state.password.displayError != null
-                  ? 'Password must be at least 8 characters'
-                  : null,
+              errorText:
+                  state.password.displayError != null
+                      ? 'Password must be at least 6 characters'
+                      : null,
             ),
             const SizedBox(height: 16),
             CustomTextField(
@@ -257,9 +268,10 @@ class _RegisterForm extends StatelessWidget {
               onChanged: (value) {
                 context.read<AuthBloc>().add(AuthConfirmPasswordChanged(value));
               },
-              errorText: state.confirmedPassword.displayError != null
-                  ? 'Passwords do not match'
-                  : null,
+              errorText:
+                  state.confirmedPassword.displayError != null
+                      ? 'Passwords do not match'
+                      : null,
             ),
             const SizedBox(height: 24),
             CustomButton(
@@ -273,6 +285,47 @@ class _RegisterForm extends StatelessWidget {
                     }
                   : null,
             ),
+            const SizedBox(height: 24),
+            // Divider
+            Row(
+              children: [
+                Expanded(child: Divider(color: Colors.grey[300])),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'Or continue with',
+                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  ),
+                ),
+                Expanded(child: Divider(color: Colors.grey[300])),
+              ],
+            ),
+            const SizedBox(height: 24),
+            // Social Login
+            const SocialLoginButtons(),
+            const SizedBox(height: 24),
+            // Login Link
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Already have an account? ',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                ),
+                TextButton(
+                  onPressed: () => context.go('/login'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFF6C63FF),
+                    padding: EdgeInsets.zero,
+                  ),
+                  child: const Text(
+                    'Sign In',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
           ],
         );
       },
