@@ -63,12 +63,12 @@ class RegisterScreen extends StatelessWidget {
                 )
               : // Mobile: Form card floats on top of background
               SafeArea(
-                  child: Column(
-                    children: [
-                      // Top section with back button - sparse
-                      SizedBox(
-                        height: 60,
-                        child: Align(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // Top section with back button
+                        const SizedBox(height: 20),
+                        Align(
                           alignment: Alignment.topLeft,
                           child: IconButton(
                             icon: const Icon(Icons.arrow_back_ios, 
@@ -78,12 +78,11 @@ class RegisterScreen extends StatelessWidget {
                             onPressed: () => context.go('/login'),
                           ),
                         ),
-                      ),
-                      // Spacer to push card down
-                      Expanded(child: Container()),
-                      // White card with form
-                      SingleChildScrollView(
-                        child: Container(
+                        // Spacer - moderate height
+                        const SizedBox(height: 40),
+                        // White card with form
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 16.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
@@ -96,8 +95,9 @@ class RegisterScreen extends StatelessWidget {
                             child: _buildFormContent(context),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 40),
+                      ],
+                    ),
                   ),
                 ),
         ),
